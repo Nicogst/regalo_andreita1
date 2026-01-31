@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Para Andrea ❤️</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            /* Fallback */
+            --bg-warm: linear-gradient(to bottom, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            --primary-gold: #d4af37;
+            --primary-pink: #e84393;
+            --soft-white: rgba(255, 255, 255, 0.9);
+            --glass: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #2d3436;
+            --deep-red: #c0392b;
+            --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-image: linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%);
+            /* Or the warm one requested: */
+            background: radial-gradient(circle at center, #ffeaa7, #fab1a0, #ff7675);
+            min-height: 100vh;
+            overflow: hidden;
+            color: var(--text-main);
+            position: relative;
+        }
+
+        /* TIPOGRAFÍA */
+        h1,
+        h2,
+        h3,
+        .script-font {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .elegant-font {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* BACKGROUND */
+        #hearts-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* SECTIONS */
+        section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.2s ease-in-out;
+            z-index: 10;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        section.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        section.scrollable {
+            overflow-y: auto;
+            justify-content: flex-start;
+            /* Allow scroll from top */
+            padding-top: 80px;
+            /* Space for title */
+        }
+
+        /* 1. START SCREEN (Elegante) */
+        .start-container {
+            text-align: center;
+            z-index: 20;
+        }
+
+        .elegant-btn {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 20px 60px;
+            border-radius: 50px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .elegant-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255, 107, 129, 0.4);
+        }
+
+        .elegant-btn::after {
+            content: '❤️';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: all 0.5s;
+        }
+
+        .elegant-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 2. WELCOME */
+        .glass-box {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            max-width: 85%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        #typewriter {
+            font-size: 1.6rem;
+            color: var(--deep-red);
+            font-weight: 500;
+            min-height: 80px;
+            margin-bottom: 20px;
+        }
+
+        .fade-text {
+            color: #555;
+            font-size: 0.9rem;
+            margin-top: 15px;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+            animation-delay: 2s;
+            /* Wait for typewriter approx */
+        }
+
+        /* 3. DISCOVERY (Circles) */
+        .circles-wrapper {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            /* Layout for circles */
+        }
+
+        .circle-node {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.3s, filter 0.3s;
+            animation: floatNode 4s ease-in-out infinite alternate;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border: 2px solid white;
+            z-index: 10;
+        }
+
+        .circle-node:active {
+            transform: scale(0.9);
+        }
+
+        .circle-node.viewed {
+            background: rgba(255, 255, 255, 0.5);
+            /* Faded out */
+            color: #888;
+            border-color: #ddd;
+            filter: grayscale(0.8);
+            transform: scale(0.8) !important;
+            animation: none;
+        }
+
+        /* Special Dentist Node */
+        .circle-node.special {
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            box-shadow: 0 0 20px rgba(161, 140, 209, 0.6);
+            z-index: 11;
+            font-size: 1.5rem;
+        }
+
+        @keyframes floatNode {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+
+            100% {
+                transform: translateY(-10px) scale(1.05);
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+            }
+        }
+
+        /* MODAL */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(45, 52, 54, 0.9);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+            padding: 20px;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            /* Mobile width */
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-img-container {
+            width: 100%;
+            height: 350px;
+            /* Fixed height for consistency */
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background: #f0f0f0;
+        }
+
+        .modal-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .phrase-text {
+            font-family: 'Playfair Display', serif;
+            color: var(--text-main);
+            font-size: 1.1rem;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 101;
+        }
+
+        /* 4. CLOSING */
+        .closing-container {
+            text-align: center;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            border-radius: 30px;
+        }
+
+        .closing-title {
+            color: var(--deep-red);
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+
+        .final-msg {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: #444;
+        }
+
+        .restart-btn {
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(232, 67, 147, 0.4);
+            letter-spacing: 1px;
+        }
+
+        /* MUSIC CONTROLS */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 200;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 2px solid white;
+            font-size: 1.2rem;
+            transition: opacity 0.3s;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Helpers */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            z-index: 300;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* Special Modal Animation */
+        .modal-card.special-open {
+            animation: popSpecial 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 90% !important;
+            /* Larger width */
+            background: linear-gradient(135deg, #fff0f0 0%, #ffeaf0 100%);
+            border: 2px solid #ff7675;
+        }
+
+        @keyframes popSpecial {
+            0% {
+                transform: scale(0) rotate(-10deg);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.1) rotate(5deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-card.special-open .modal-img-container {
+            height: auto;
+            max-height: 70vh;
+            /* Increased slightly */
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-card.special-open .modal-img {
+            object-fit: contain;
+            /* Shows full image */
+            width: 100%;
+            height: auto;
+            max-height: 100%;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- AUDIO -->
+    <audio id="bg-music" loop>
+        <!-- Reemplaza con tu archivo -->
+        <source src="Alleh & Yorghaki - tranqui, te puedes enamorar (visualizer).mp3" type="audio/mp3">
+        Tu navegador no soporta audio.
+    </audio>
+
+    <!-- VISUALS -->
+    <canvas id="hearts-canvas"></canvas>
+
+    <!-- MUSIC UI -->
+    <div id="music-btn" class="music-control hidden">🎵</div>
+
+    <!-- TOAST MSG -->
+    <div id="toast" class="toast">🔒 Debes abrir los otros recuerdos primero ❤️</div>
+
+    <!-- 1. OPENING -->
+    <section id="opening" class="active">
+        <div class="start-container">
+            <h1 style="color: white; font-size: 2.5rem; margin-bottom: 40px; text-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+                Para Andrea</h1>
+            <button id="start-btn" class="elegant-btn">Abrir</button>
+        </div>
+    </section>
+
+    <!-- 2. WELCOME -->
+    <section id="welcome">
+        <div class="glass-box">
+            <div id="typewriter"></div>
+            <p class="fade-text" id="instructions">✨ Toca cada círculo para descubrir un mensaje ✨</p>
+        </div>
+    </section>
+
+    <!-- 3. DISCOVERY (Circles) -->
+    <section id="discovery">
+        <div class="circles-wrapper" id="circles-area">
+            <!-- Circles injected via JS -->
+        </div>
+    </section>
+
+    <!-- MODAL POPUP -->
+    <div id="modal" class="modal">
+        <div class="modal-card">
+            <button class="close-modal" id="close-modal-btn">✕</button>
+            <div class="modal-img-container">
+                <img id="modal-img" class="modal-img" src="" alt="Recuerdo">
+            </div>
+            <p id="modal-text" class="phrase-text"></p>
+        </div>
+    </div>
+
+    <!-- 4. CLOSING -->
+    <section id="closing">
+        <div class="closing-container">
+            <h1 class="closing-title">A por todas ❤️</h1>
+            <p class="final-msg">
+                "Esta es tu nueva aventura. Ve y conquístala. <br>
+                Aquí estaré, esperándote con todo mi amor."
+            </p>
+            <button id="restart-btn" class="restart-btn">Volver a ver</button>
+        </div>
+    </section>
+
+    <script>
+        // --- DATA ---
+        // Lista de imágenes. NOTA: Debes asegurarte de qué foto es la de "dentista"
+        // y marcar isDentist: true en ella.
+        const imagesData = [
+            { src: "WhatsApp Image 2026-01-31 at 1.25.57 PM.jpeg", isDentist: false },
+            { src: "WhatsApp Image 2026-01-31 at 1.25.58 PM (1).jpeg", isDentist: false },
+            { src: "WhatsApp Image 2026-01-31 at 1.25.58 PM.jpeg", isDentist: false },
+            { src: "WhatsApp Image 2026-01-31 at 1.25.59 PM (1).jpeg", isDentist: false },
+            { src: "WhatsApp Image 2026-01-31 at 1.25.59 PM.jpeg", isDentist: false },
+            { src: "WhatsApp Image 2026-01-31 at 1.26.05 PM (1).jpeg", isDentist: false },
+            { src: "WhatsApp Image 2026-01-31 at 1.26.05 PM (2).jpeg", isDentist: false },
+            { src: "WhatsApp Image 2026-01-31 at 1.26.05 PM.jpeg", isDentist: false },
+            { src: "WhatsApp Image 2026-01-31 at 1.26.06 PM.jpeg", isDentist: false },
+            { src: "special_moment.jpg", isDentist: true }
+        ];
+
+        const phrasesList = [
+            "Eres más fuerte de lo que crees y más capaz de lo que imaginas",
+            "Conquista el mundo, yo te espero con los brazos abiertos",
+            "Este es tu momento de brillar. No tengas miedo",
+            "Cada reto que enfrentes te hará más fuerte. Confía en ti",
+            "Va a ser difícil, va a ser retador, pero tú eres imparable",
+            "El mundo está esperando conocer todo lo increíble que tienes",
+            "No importa cuán lejos estés, siempre serás mi inspiración",
+            "Esta distancia es temporal, pero tu éxito será para siempre",
+            "Cada obstáculo que superes me hará amarte aún más",
+            "Ve y demuestra de qué estás hecha. Eres extraordinaria",
+            "La vida te da esta oportunidad porque sabe que estás lista"
+        ];
+
+        const dentistPhrase = "Serás una gran odontóloga. Mucha suerte, mi Moni 💖";
+
+        // State
+        let viewedIndices = new Set();
+        let currentOpenIndex = -1;
+
+        // --- SETUP & CANVAS ---
+        const canvas = document.getElementById('hearts-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animationFrame;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Load Heart Icon
+        const heartIcon = new Image();
+        heartIcon.src = 'heart_icon.png';
+
+        class Particle {
+            constructor(x, y, type) {
+                this.x = x || Math.random() * canvas.width;
+                this.y = y || -20; // Type heart starts top
+                this.size = Math.random() * 15 + 10; // Slightly larger for image
+                this.speedY = Math.random() * 2 + 0.5;
+                this.speedX = Math.random() * 2 - 1;
+                // For custom image, we might not need hue, but keep for confetti
+                this.color = `hsl(${Math.random() * 50 + 330}, 90%, 60%)`;
+                this.type = type || 'heart'; // 'heart', 'star', 'confetti'
+
+                if (this.type === 'confetti') {
+                    this.y = y; // start at burst point
+                    this.speedY = (Math.random() - 0.5) * 15;
+                    this.speedX = (Math.random() - 0.5) * 15;
+                    this.gravity = 0.4;
+                    this.drag = 0.96;
+                    this.size = Math.random() * 8 + 2;
+                    this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                }
+            }
+
+            update() {
+                if (this.type === 'confetti') {
+                    this.speedX *= this.drag;
+                    this.speedY *= this.drag;
+                    this.speedY += this.gravity;
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    this.size *= 0.98; // shrink
+                } else { // Heart falling
+                    this.y += this.speedY;
+                    this.x += Math.sin(this.y * 0.01) * 0.5;
+                    if (this.y > canvas.height) this.y = -20;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.fillStyle = this.color;
+                if (this.type === 'heart') {
+                    if (heartIcon.complete && heartIcon.naturalWidth !== 0) {
+                        ctx.drawImage(heartIcon, this.x, this.y, this.size, this.size);
+                    } else {
+                        ctx.font = `${this.size}px Arial`;
+                        ctx.fillText('❤️', this.x, this.y);
+                    }
+                } else if (this.type === 'star') {
+                    ctx.font = `${this.size}px Arial`;
+                    ctx.fillText('✨', this.x, this.y);
+                } else { // confetti circle
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        function initBackgroundParticles() {
+            for (let i = 0; i < 15; i++) particles.push(new Particle(null, null, 'heart'));
+        }
+
+        function burstParticles(x, y, count = 30) {
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y, 'confetti'));
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.update();
+                p.draw();
+                // Remove dead confetti
+                if (p.type === 'confetti' && p.size < 0.5) {
+                    particles.splice(i, 1);
+                }
+            }
+            // Maintain hearts
+            const hearts = particles.filter(p => p.type === 'heart');
+            if (hearts.length < 15) {
+                if (Math.random() < 0.05) particles.push(new Particle(null, null, 'heart'));
+            }
+            requestAnimationFrame(animate);
+        }
+
+        // --- APP LOGIC ---
+
+        // Sections
+        const sOpening = document.getElementById('opening');
+        const sWelcome = document.getElementById('welcome');
+        const sDiscovery = document.getElementById('discovery');
+        const sClosing = document.getElementById('closing');
+        const musicBtn = document.getElementById('music-btn');
+        const audio = document.getElementById('bg-music');
+
+        // Auto-play music on first interaction (Autoplay Policy Fix)
+        document.addEventListener("click", () => {
+            audio.play().then(() => {
+                musicBtn.textContent = '🎵';
+            }).catch(() => { });
+        }, { once: true });
+
+        // Start
+        document.getElementById('start-btn').addEventListener('click', () => {
+            playAudio();
+            initBackgroundParticles();
+            animate();
+
+            sOpening.classList.remove('active');
+            sWelcome.classList.add('active');
+
+            musicBtn.classList.remove('hidden');
+            musicBtn.classList.add('visible');
+
+            // Start Typewriter
+            startTypewriter();
+        });
+
+        function playAudio() {
+            audio.play().then(() => {
+                musicBtn.textContent = '🎵';
+            }).catch(e => {
+                console.log("Audio block");
+                musicBtn.textContent = '🔇';
+            });
+        }
+
+        musicBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                musicBtn.textContent = '🎵';
+            } else {
+                audio.pause();
+                musicBtn.textContent = '🔇';
+            }
+        });
+
+        // Typewriter
+        function startTypewriter() {
+            const txt = "Para ti, que estás a punto de conquistar el mundo...";
+            const speed = 70;
+            const target = document.getElementById('typewriter');
+            let i = 0;
+
+            function type() {
+                if (i < txt.length) {
+                    target.innerHTML += txt.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    // Show instructions is CSS delayed.
+                    // Wait then go to Discovery
+                    setTimeout(() => {
+                        sWelcome.classList.remove('active');
+                        sDiscovery.classList.add('active');
+                        generateCircles();
+                    }, 4000);
+                }
+            }
+            type();
+        }
+
+        // Circles Generation
+        function generateCircles() {
+            const container = document.getElementById('circles-area');
+            container.innerHTML = '';
+
+            // Positions logic: Simple "random-ish" grid
+            // We want them spread out. Let's create varying positions (top/left %)
+            // To ensure no overlap, we can use a logical grid but randomize offsets.
+            // Better yet for mobile: pre-defined flexible positions.
+
+            // Let's generate random positions but checking distance to previous circles.
+            const nodes = [];
+            const safeDistance = 15; // %
+
+            imagesData.forEach((img, idx) => {
+                const el = document.createElement('div');
+                el.className = 'circle-node';
+                el.innerText = idx + 1;
+
+                // Size
+                let size = Math.random() * 20 + 60; // 60-80px
+                if (img.isDentist) {
+                    el.classList.add('special');
+                    el.innerText = '🦷';
+                    size = 90;
+                }
+
+                el.style.width = size + 'px';
+                el.style.height = size + 'px';
+
+                // Position attempts
+                let top, left, collision;
+                let attempts = 0;
+                do {
+                    collision = false;
+                    top = Math.random() * 80 + 10; // 10-90%
+                    left = Math.random() * 80 + 10; // 10-90%
+
+                    // Check collision
+                    for (let n of nodes) {
+                        let dist = Math.sqrt(Math.pow(n.t - top, 2) + Math.pow(n.l - left, 2));
+                        if (dist < safeDistance) collision = true;
+                    }
+                    attempts++;
+                } while (collision && attempts < 50);
+
+                if (attempts >= 50) {
+                    // Fallback if super crowded (rare with 10 items)
+                    top = Math.random() * 80 + 10;
+                    left = Math.random() * 80 + 10;
+                }
+
+                nodes.push({ t: top, l: left });
+
+                el.style.top = top + '%';
+                el.style.left = left + '%';
+
+                // Float delay
+                el.style.animationDelay = (Math.random() * 2) + 's';
+
+                // Click
+                el.addEventListener('click', (e) => openModal(idx, e.clientX, e.clientY));
+
+                // Store ref
+                el.dataset.idx = idx;
+
+                container.appendChild(el);
+            });
+        }
+
+        // Modal Logic
+        const modal = document.getElementById('modal');
+        const mImg = document.getElementById('modal-img');
+        const mText = document.getElementById('modal-text');
+
+        function openModal(idx, x, y) {
+            currentOpenIndex = idx;
+            const imgData = imagesData[idx];
+
+            // Logic for Dentist Circle
+            if (imgData.isDentist) {
+                // Count how many non-dentist items are viewed
+                // imagesData.length - 1 is the target count
+                const othersCount = imagesData.length - 1;
+                // Currently viewed minus any potential dentist click (though not possible if locked logic correct)
+                // Actually simply: size must be othersCount
+
+                // Let's count explicitly excluding current dentist index just in case
+                let viewedOthers = 0;
+                viewedIndices.forEach(val => {
+                    if (!imagesData[val].isDentist) viewedOthers++;
+                });
+
+                if (viewedOthers < othersCount) {
+                    showToast();
+                    return; // Block opening
+                }
+            }
+
+            const card = document.querySelector('.modal-card');
+            mImg.src = imgData.src;
+
+            // Reset special class
+            card.classList.remove('special-open');
+
+            if (imgData.isDentist) {
+                mText.innerText = dentistPhrase;
+                mText.style.fontWeight = "bold";
+                mText.style.color = "#d63031";
+
+                // Special Styles
+                card.classList.add('special-open');
+
+                burstParticles(window.innerWidth / 2, window.innerHeight / 2, 100); // MORE CONFETTI
+            } else {
+                // Pick phrase. If index mapped to phrase exists, use it. Else random loop.
+                mText.innerText = phrasesList[idx % phrasesList.length];
+                mText.style.fontWeight = "normal";
+                mText.style.color = "var(--text-main)";
+                burstParticles(x, y, 30);
+            }
+
+            modal.classList.add('active');
+
+            // Mark circle as viewed visually
+            const circle = document.querySelector(`.circle-node[data-idx='${idx}']`);
+            if (circle) circle.classList.add('viewed');
+
+            viewedIndices.add(idx);
+        }
+
+        function showToast() {
+            const t = document.getElementById('toast');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function closeModalFunc() {
+            modal.classList.remove('active');
+
+            // Check if all viewed
+            if (viewedIndices.size === imagesData.length) {
+                setTimeout(() => {
+                    sDiscovery.classList.remove('active');
+                    sClosing.classList.add('active');
+                    burstParticles(window.innerWidth / 2, window.innerHeight / 2, 150);
+                }, 1000);
+            }
+        }
+
+        document.getElementById('close-modal-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeModalFunc();
+        });
+
+        // Close on background click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModalFunc();
+        });
+
+        // Restart
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            viewedIndices.clear();
+            sClosing.classList.remove('active');
+            sOpening.classList.add('active');
+            // Re-generate circles (random pos changes)
+            // But waiting until we get back to Discovery
+        });
+
+    </script>
+</body>
+
+</html>
